@@ -8,8 +8,11 @@ class TodoModel {
 
   @HiveField(1)
   late bool completed;
+  @HiveField(2)
+  String catagory;
 
   TodoModel({
+    required this.catagory,
     required this.title,
     this.completed = false,
   });

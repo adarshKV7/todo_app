@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:todo_app/controller/todo_controller.dart';
+import 'package:todo_app/core/constants/color_constants.dart';
+import 'package:todo_app/view/homescreen/widgets/add_todo_form.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,163 +13,138 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController addController = TextEditingController();
-  var formKey = GlobalKey<FormState>();
-  List<String> category = ["Home", "Work"];
-  String? dropDownValue;
-  static bool isChecked = false;
+  @override
+  void initState() {
+    TodoController.initData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        leading: Icon(Icons.arrow_back_ios_new, size: 30),
-        title: Row(
-          children: [
-            Text(
-              "Today",
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Icon(
-              Icons.sunny,
-              size: 30,
-              color: Colors.amber,
-            )
-          ],
-        ),
+        title: const Text('TODO'),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.search),
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context) => Container(
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            "Add task",
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Form(
-                            key: formKey,
-                            child: TextFormField(
-                              controller: addController,
-                              decoration: InputDecoration(
-                                  hintText: "Task",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20))),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          DropdownButton(
-                              hint: Text("select"),
-                              value: dropDownValue,
-                              // items: category
-                              //     .map((e) => DropdownMenuItem(
-                              //           child: Text(e),
-                              //           value: e,
-                              //         ))
-                              //     .toList(),
-                              items: [
-                                DropdownMenuItem(
-                                  child: Text("Home"),
-                                  value: "Home",
-                                ),
-                                DropdownMenuItem(
-                                  child: Text("Work"),
-                                  value: "Work",
-                                )
-                              ],
-                              onChanged: (value) {
-                                dropDownValue = value;
-                                setState(() {});
-                              }),
-                          InkWell(
-                            onTap: () {},
-                            child: Container(
-                                width: 100,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Add",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18),
-                                  ),
-                                )),
-                          )
-                        ],
-                      ),
-                    ),
-                  ));
-        },
-        child: Icon(Icons.add),
-      ),
-      body: ListView.separated(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          itemBuilder: (context, index) => Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              decoration: BoxDecoration(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                var item =
+                    TodoController.getData(TodoController.todoKeyList[index])!;
+                return ListTile(
+                  titleAlignment: ListTileTitleAlignment.titleHeight,
+                  leading: Checkbox(
+                    value: item.completed,
+                    onChanged: (value) {
+                      item.completed = value!;
+                      TodoController.updateDate(
+                          TodoController.todoKeyList[index], item);
+                      setState(() {});
+                    },
+                  ),
+                  title: Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      Checkbox(
-                          value: isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              isChecked = !isChecked;
-                            });
-                          }),
-                      Text("Task name"),
-                      SizedBox(
-                        width: 20,
+                      Text(
+                        item.title,
+                        style: TextStyle(
+                            decorationStyle: TextDecorationStyle.solid,
+                            decoration: item.completed
+                                ? TextDecoration.lineThrough
+                                : null),
                       ),
-                      isChecked == false
-                          ? Text(
-                              "InComplted",
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          : Text(
-                              "Complted",
-                              style: TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold),
-                            )
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 5,
+                          horizontal: 10,
+                        ),
+                        decoration: BoxDecoration(
+                            color: ColorConstants.primaryWhite.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Text(
+                          item.catagory,
+                          style: TextStyle(
+                              decorationStyle: TextDecorationStyle.solid,
+                              decoration: item.completed
+                                  ? TextDecoration.lineThrough
+                                  : null),
+                        ),
+                      ),
                     ],
                   ),
-                ],
-              )),
-          separatorBuilder: (context, index) => SizedBox(
-                height: 10,
+                  trailing: IconButton(
+                    onPressed: () {
+                      TodoController.deleteData(
+                          TodoController.todoKeyList[index]);
+                      setState(() {});
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
+                );
+              },
+              itemCount: TodoController.todoKeyList.length,
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) {
+                  return AddTodoForm(
+                    onComplete: () {
+                      setState(() {});
+                    },
+                  );
+                },
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              margin: const EdgeInsets.only(
+                bottom: 15,
+                left: 20,
+                right: 20,
+                top: 5,
               ),
-          itemCount: TodoController.todoKeyList.length),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 5, 39, 66),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.transparent,
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Add a Task',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
+                  ),
+                  const CircleAvatar(
+                    radius: 30,
+                    child: Icon(Icons.add),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -3,24 +3,29 @@ import 'package:todo_app/model/todo_model.dart';
 
 class TodoController {
   static List<dynamic> todoKeyList = [];
+  static List<String> categoryList = ['Home', 'Work', 'Personal'];
+  static var box = Hive.box<TodoModel>('todo');
 
-  static var myBox = Hive.box<TodoModel>("todo");
-
-  static initKeys() {
-    todoKeyList = myBox.keys.toList();
+  static void initData() {
+    todoKeyList = box.keys.toList();
   }
 
   static Future<void> addData(TodoModel item) async {
-    await myBox.add(item);
-    initKeys();
+    await box.add(item);
+    initData();
   }
 
-  static Future<void> deletedData(var key) async {
-    await myBox.delete(key);
-    initKeys();
+  static TodoModel? getData(var key) {
+    return box.get(key);
   }
 
-  static TodoModel? getdata(var key) {
-    return myBox.get(key);
+  static Future<void> deleteData(var key) async {
+    await box.delete(key);
+    initData();
+  }
+
+  static Future<void> updateDate(var key, TodoModel item) async {
+    await box.put(key, item);
+    initData();
   }
 }
