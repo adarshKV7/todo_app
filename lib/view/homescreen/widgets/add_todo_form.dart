@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:todo_app/controller/todo_controller.dart';
@@ -68,8 +69,8 @@ class _AddTodoFormState extends State<AddTodoForm> {
                   return null;
                 },
               ),
-              const SizedBox(height: 10),
-              const Text(
+              SizedBox(height: 10),
+              Text(
                 'Category',
                 style: TextStyle(
                   fontSize: 19,
@@ -104,15 +105,6 @@ class _AddTodoFormState extends State<AddTodoForm> {
                         return;
                       }
                       if (widget.isEdit) {
-                        // await NotesScreenController.editNote(
-                        //   key: widget.noteKey!,
-                        //   item: NoteModel(
-                        //     title: titleController.text,
-                        //     description: descriptionController.text,
-                        //     date: dateController.text,
-                        //     colorIndex: selectedColorIndex,
-                        //   ),
-                        // );
                       } else {
                         await TodoController.addData(
                           TodoModel(
@@ -130,14 +122,14 @@ class _AddTodoFormState extends State<AddTodoForm> {
                       width: 100,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
-                        color: ColorConstants.inputFillColor,
+                        color: Color.fromARGB(255, 135, 184, 225),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Center(
                         child: Text(
                           widget.isEdit ? 'Save' : 'Add',
                           style: const TextStyle(
-                            color: Colors.green,
+                            color: Color.fromARGB(255, 22, 82, 24),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -153,7 +145,7 @@ class _AddTodoFormState extends State<AddTodoForm> {
                       width: 100,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
-                        color:ColorConstants.inputFillColor,
+                        color: Color.fromARGB(255, 68, 129, 179),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: const Center(
